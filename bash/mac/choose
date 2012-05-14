@@ -1,0 +1,82 @@
+#! /bin/bash
+
+. $SBARKER0_UTILS_BASH_MAC/common_functs.sh
+. $SBARKER0_UTILS_BASH_MAC/choose_functs.sh
+
+
+# ------------------------------------------------------------------------------
+# defaults
+
+message="Choose"
+choices="yes/no"
+testing_only=false
+
+
+# ------------------------------------------------------------------------------
+# functions
+
+function die_usage() {
+  cat >&2 <<EOS
+
+Asks user for response in a group of choices.
+
+Usage:
+  choose [<message> [<choices text> [<default choice letter>]]]
+
+  default args:
+    <message>               = $message
+    <choices text>          = $choices
+    <default choice letter> = y
+  notes:
+    wrap non-first letter choices in <choices text> with parens to indicate use
+
+  examples:
+    choose
+      # produces: Choose (yes/no) [y]
+    choose "Proceed?"
+      # produces: Proceed? (yes/no) [y]
+    choose "What fruit?" "apple/bananna/cherries" "c"
+      # produces: What fruit? (apple/bananna/cherries) [c]
+    choose "What fruit?" "a(p)ple/b(a)nanna/c(h)erries"
+      # produces: What fruit? (a(p)ple/b(a)nanna/c(h)erries) [p]
+EOS
+  exit 1
+}
+
+
+# ------------------------------------------------------------------------------
+# options and args
+
+while getopts ":h" opt; do
+  case $opt in
+    h) die_usage ;;
+    \?) die_usage ;;
+  esac
+done
+shift $((OPTIND-1))
+
+test $# -gt 0 && message="$1"
+test $# -gt 1 && choices="$2"
+test $# -gt 2 && default_choice="$3"
+
+
+# ------------------------------------------------------------------------------
+# work
+
+options_str=`build_options_str "$choices"`
+default_response=`calc_default_response $options_str $default_choice`
+
+prompt="$message ($choices) [$default_response] "
+
+finished=0
+while [ $finished -lt 1 ]; do
+  print_green "$prompt"
+  response=`get_input $default_response`
+  if [ "`is_response_valid $options_str $response`" == "true" ]; then
+    finished=1
+  else
+    println_red "\nInvalid response"
+  fi
+done
+
+convert_response_to_choice "$choices" $options_str $response
