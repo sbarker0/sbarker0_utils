@@ -55,9 +55,10 @@ function convert_response_to_choice() {
 }
 
 function get_input () {
-  local default_response=$1
+  local prompt=$1
+  local default_response=$2
 
-  read response
+  read -p "$prompt" response
   if [ ${#response} -eq 0 ]; then
     response=$default_response
   fi
