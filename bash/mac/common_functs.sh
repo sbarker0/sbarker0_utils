@@ -95,10 +95,6 @@ function run_it_ignore_failure() {
 }
 
 function verify() {
-  if [ "$1" != "" ]; then
-    println_blue "$1"
-  else
-    printf "${blue}ready to proceed?    (press ENTER to proceed or ^C to bail)${reset}"
-  fi
-  read x
+  response=`choose "Ready to proceed?" "y/n"`
+  test "$response" != "y" && exit 1
 }
