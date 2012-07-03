@@ -33,7 +33,10 @@ function display_elapsed_time() {
   println_green "$started started   ($started_secs secs)"
   println_green "$finished finished  ($finished_secs secs)"
   s=$(($finished_secs-$started_secs))
-  println_green "`date -r $s "+%H:%M:%S"` elapses   ($s secs)"
+  # TODO: this hack fixes my timezone. it needs to be fixed for real. this version is NOT a keeper.
+  # TODO: my timezone is GMT+5h (which is 18000 seconds).
+  s1=$(($finished_secs-$started_secs+18000))
+  println_green "`date -r $s1 "+%H:%M:%S"` elapses   ($s secs)"
 }
 
 function print_blue() {
