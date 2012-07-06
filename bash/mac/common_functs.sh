@@ -63,6 +63,10 @@ function print_yellow() {
   printf "${yellow}$1${reset}"
 }
 
+function println() {
+  printf "$1\n"
+}
+
 function println_blue() {
   print_blue "$1\n"
 }
