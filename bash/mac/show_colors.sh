@@ -1,6 +1,6 @@
 #! /bin/bash
 
-. $SBARKER0_UTILS_MAC_BASH/common_functs.sh
+. $SBARKER0_UTILS_BASH_MAC/common_functs.sh
 
 
 # ------------------------------------------------------------------------------

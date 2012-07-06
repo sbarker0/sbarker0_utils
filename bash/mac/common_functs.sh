@@ -33,7 +33,10 @@ function display_elapsed_time() {
   println_green "$started started   ($started_secs secs)"
   println_green "$finished finished  ($finished_secs secs)"
   s=$(($finished_secs-$started_secs))
-  println_green "`date -r $s "+%H:%M:%S"` elapses   ($s secs)"
+  # TODO: this hack fixes my timezone. it needs to be fixed for real. this version is NOT a keeper.
+  # TODO: my timezone is GMT+5h (which is 18000 seconds).
+  s1=$(($finished_secs-$started_secs+18000))
+  println_green "`date -r $s1 "+%H:%M:%S"` elapses   ($s secs)"
 }
 
 function print_blue() {
@@ -58,6 +61,10 @@ function print_red() {
 
 function print_yellow() {
   printf "${yellow}$1${reset}"
+}
+
+function println() {
+  printf "$1\n"
 }
 
 function println_blue() {
@@ -95,10 +102,6 @@ function run_it_ignore_failure() {
 }
 
 function verify() {
-  if [ "$1" != "" ]; then
-    println_blue "$1"
-  else
-    printf "${blue}ready to proceed?    (press ENTER to proceed or ^C to bail)${reset}"
-  fi
-  read x
+  response=`choose "Ready to proceed?" "y/n"`
+  test "$response" != "y" && exit 1
 }

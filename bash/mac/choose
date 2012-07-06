@@ -70,8 +70,7 @@ prompt="$message ($choices) [$default_response] "
 
 finished=0
 while [ $finished -lt 1 ]; do
-  print_green "$prompt"
-  response=`get_input $default_response`
+  response=`get_input "$prompt" $default_response`
   if [ "`is_response_valid $options_str $response`" == "true" ]; then
     finished=1
   else
