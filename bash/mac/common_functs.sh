@@ -26,10 +26,12 @@ function cp_or_die() {
 
 function display_elapsed_time() {
   started_secs=$1
+  message="$2"
 
   started=`date -r $((started_secs)) "+%H:%M:%S"`
   finished=`date "+%H:%M:%S"`
   finished_secs=`date "+%s"`
+  [ "$message" != "" ] && println_green "\n$message"
   println_green "$started started   ($started_secs secs)"
   println_green "$finished finished  ($finished_secs secs)"
   s=$(($finished_secs-$started_secs))
