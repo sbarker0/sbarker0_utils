@@ -54,17 +54,6 @@ function convert_response_to_choice() {
   clean_choices $choices | sed -e "s/\([^,]*,\)\{$response_index\}\([^,]*\).*/\\2/" | sed -e "s/[()]//g"
 }
 
-function get_input () {
-  local prompt=$1
-  local default_response=$2
-
-  read -p "$prompt" response
-  if [ ${#response} -eq 0 ]; then
-    response=$default_response
-  fi
-  echo $response
-}
-
 function is_response_valid() {
   local options_str=$1
   local response=$2
