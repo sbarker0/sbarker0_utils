@@ -41,6 +41,19 @@ function display_elapsed_time() {
   println_green "`date -r $s1 "+%H:%M:%S"` elapses   ($s secs)"
 }
 
+# Usage:
+#		x=`get_input "Enter something: [$some_default]" "$some_default"`
+function get_input () {
+  local prompt=$1
+  local default_response=$2
+
+  read -p "$prompt" response
+  if [ ${#response} -eq 0 ]; then
+    response=$default_response
+  fi
+  echo $response
+}
+
 function print_blue() {
   printf "${blue}$1${reset}"
 }
