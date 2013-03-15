@@ -42,7 +42,7 @@ function display_elapsed_time() {
 }
 
 # Usage:
-#		x=`get_input "Enter something: [$some_default]" "$some_default"`
+#   x=`get_input "Enter something: [$some_default]" "$some_default"`
 function get_input () {
   local prompt=$1
   local default_response=$2
@@ -72,6 +72,18 @@ function print_magenta() {
 
 function print_red() {
   printf "${red}$1${reset}"
+}
+
+function print_separator_colons() {
+  printf "\n    :::::::\n"
+}
+
+function print_separator_hr() {
+  printf "\n\n--------------------------------------------------------------------------------\n\n"
+}
+
+function print_separator_hr2() {
+  printf "\n             ------------\n"
 }
 
 function print_yellow() {
