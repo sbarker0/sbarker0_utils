@@ -129,6 +129,7 @@ function run_it_ignore_failure() {
 }
 
 function verify() {
-  response=`choose "Ready to proceed?" "y/n"`
+  local msg="$1" && [ "$msg" == "" ] && msg="Ready to proceed?"
+  response=`choose "$msg" "y/n"`
   test "$response" != "y" && exit 1
 }
