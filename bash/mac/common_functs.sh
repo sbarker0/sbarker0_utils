@@ -83,7 +83,7 @@ function print_separator_hr() {
 }
 
 function print_separator_hr2() {
-  printf "\n             ------------\n"
+  printf "\n             ------------\n\n"
 }
 
 function print_yellow() {
