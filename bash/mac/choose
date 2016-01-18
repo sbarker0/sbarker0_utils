@@ -32,13 +32,15 @@ Usage:
 
   examples:
     choose
-      # produces: Choose (yes/no) [y]
+      ==>  Choose (yes/no) [y]
     choose "Proceed?"
-      # produces: Proceed? (yes/no) [y]
+      ==>  Proceed? (yes/no) [y]
+    choose "What fruit?" "apple/bananna/cherries"
+      ==>  What fruit? (apple/bananna/cherries) [a]
     choose "What fruit?" "apple/bananna/cherries" "c"
-      # produces: What fruit? (apple/bananna/cherries) [c]
+      ==>  What fruit? (apple/bananna/cherries) [c]
     choose "What fruit?" "a(p)ple/b(a)nanna/c(h)erries"
-      # produces: What fruit? (a(p)ple/b(a)nanna/c(h)erries) [p]
+      ==>  What fruit? (a(p)ple/b(a)nanna/c(h)erries) [p]
 EOS
   exit 1
 }
