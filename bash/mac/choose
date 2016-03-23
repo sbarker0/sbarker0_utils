@@ -28,11 +28,14 @@ Usage:
     <choices text>          = $choices
     <default choice letter> = y
   notes:
-    wrap non-first letter choices in <choices text> with parens to indicate use
+    - wrap non-first letter choices in <choices text> with parens to indicate use
+    - empty string for any argument is treated as missing arg and so uses default value
 
   examples:
     choose
       ==>  Choose (yes/no) [y]
+    choose "" "" n
+      ==>  Choose (yes/no) [n]
     choose "Proceed?"
       ==>  Proceed? (yes/no) [y]
     choose "What fruit?" "apple/bananna/cherries"
@@ -57,9 +60,9 @@ while getopts ":h" opt; do
 done
 shift $((OPTIND-1))
 
-test $# -gt 0 && message="$1"
-test $# -gt 1 && choices="$2"
-test $# -gt 2 && default_choice="$3"
+test $# -gt 0 && test "$1" != "" && message="$1"
+test $# -gt 1 && test "$2" != "" && choices="$2"
+test $# -gt 2 && test "$3" != "" && default_choice="$3"
 
 
 # ------------------------------------------------------------------------------
