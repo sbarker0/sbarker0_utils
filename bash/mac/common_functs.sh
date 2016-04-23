@@ -131,5 +131,6 @@ function run_it_ignore_failure() {
 function verify() {
   local msg="$1" && [ "$msg" == "" ] && msg="Ready to proceed?"
   response=`choose "$msg" "y/n"`
-  test "$response" != "y" && exit 1
+  test "$response" != "y" && println_yellow "  bailing..." && exit 1
+  return 0  # lame result to force zero and not trigger exit on "error"
 }
