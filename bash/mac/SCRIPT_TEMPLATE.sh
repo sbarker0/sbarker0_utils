@@ -91,3 +91,5 @@ println_cyan "running step 2"
 
   println_yellow "work goes here : remember to use color conventions in show_colors.sh"
   show_colors.sh
+
+# println_red "bailing" && exit 1
