@@ -86,8 +86,15 @@ println_cyan "running step 1"
   println_yellow "work goes here : remember to use color conventions in show_colors.sh"
   show_colors.sh
 
+
 # ------------------------------------------------------------------------------
 println_cyan "running step 2"
 
   println_yellow "work goes here : remember to use color conventions in show_colors.sh"
   show_colors.sh
+
+
+# ------------------------------------------------------------------------------
+println_cyan "$0: normal successful completion"
+
+  # println_red "bailing" && exit 1
