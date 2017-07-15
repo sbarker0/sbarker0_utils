@@ -1,0 +1,10 @@
+#!/bin/bash
+if [ "$1" == "" ]; then
+  date "+%H:%M:%S"
+else
+  if [ "$1" == ":" ] || [ "$1" == "1" ]; then
+    date "+%H%M%S"
+  else
+    date "+%H$1%M$1%S"
+  fi
+fi
