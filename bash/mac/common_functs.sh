@@ -66,6 +66,11 @@ function print_green() {
   printf "${green}$1${reset}"
 }
 
+function print_header() {
+  print_separator_hr
+  println_cyan "$1"
+}
+
 function print_magenta() {
   printf "${magenta}$1${reset}"
 }
