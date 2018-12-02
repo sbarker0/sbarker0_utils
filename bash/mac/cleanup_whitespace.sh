@@ -51,9 +51,11 @@ function processFile() {
   filename=`basename ${filespec}`
   ext="${filename##*.}"
   if  [ 0 == 1 ]                  \
-      || [ "${ext}" == 'bz' ]    \
+      || [ "${ext}" == 'bz' ]     \
       || [ "${ext}" == 'doc' ]    \
       || [ "${ext}" == 'docx' ]   \
+      || [ "${ext}" == 'gnucash' ]  \
+      || [ "${ext}" == 'ofx' ]    \
       || [ "${ext}" == 'pdf' ]    \
       || [ "${ext}" == 'tar' ]    \
       || [ "${ext}" == 'zip' ]    \
@@ -64,6 +66,7 @@ function processFile() {
           && [ "${ext}" != "css" ]        \
           && [ "${ext}" != 'gitignore' ]  \
           && [ "${ext}" != 'gradle' ]     \
+          && [ "${ext}" != 'groovy' ]     \
           && [ "${ext}" != "html" ]       \
           && [ "${ext}" != "java" ]       \
           && [ "${ext}" != "json" ]       \
