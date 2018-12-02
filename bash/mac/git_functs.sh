@@ -2,13 +2,25 @@
 
 function git_get_current_branch()
 {
-  git br | grep "*" | sed "s/\* //"
+  git branch | grep "*" | sed "s/\* //"
 }
 
+
+# return origin if it exists, otherwise, one of the remotes
 function git_get_remote_name()
 {
-  git remote | grep "origin"
+  r=
+  for x in `git remote`; do
+    r=$x
+    if [ "$x" == "origin" ]; then
+      break
+    fi
+  done
+  if [ "$r" != "" ]; then
+    echo $r
+  fi
 }
+
 
 function git_get_repo_name()
 {

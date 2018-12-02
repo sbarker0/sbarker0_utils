@@ -1,0 +1,90 @@
+#! /bin/bash
+
+set -e   # terminate script on error
+
+. $SBARKER0_UTILS_BASH_MAC/common_functs.sh
+
+
+# ------------------------------------------------------------------------------
+# defaults
+
+  quiet_mode=false
+
+
+# ------------------------------------------------------------------------------
+# functions
+
+  function die_usage() {
+    cat >&2 <<EOS
+
+Move file or dir to /tmp dir
+
+Usage:
+  mvtmp <source>
+
+  options:
+    -q            flip quiet mode (skips confirmation)  [default = $quiet_mode]
+
+  examples:
+      mvtmp some_dir
+      mvtmp *bz*
+EOS
+    exit 1
+  }
+
+
+# ------------------------------------------------------------------------------
+# confirm env requirements
+
+  x=$SBARKER0_UTILS
+  [ "$x" == "" ] && printf "ERROR: env variable SBARKER0_UTILS is required\n" && die_usage
+
+
+# ------------------------------------------------------------------------------
+# options and args
+
+  while getopts ":q" opt; do
+    case $opt in
+      q)  quiet_mode=true ;;
+      \?) die_usage ;;
+    esac
+  done
+  shift $((OPTIND-1))
+
+  test $# -lt 1 && println_red "\nERROR: source is required\n" && die_usage
+
+
+# ------------------------------------------------------------------------------
+# user confirmation
+
+# cat >&1 <<EOS
+
+#   quiet_mode          = $quiet_mode
+
+#   source              = $source
+
+
+# EOS
+# $quiet_mode || verify
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# work starts here
+
+
+# ------------------------------------------------------------------------------
+# print_header "running step 1"
+
+  arg_count=$#
+  i=1
+  while [ $i -le $arg_count ]; do
+    source=${!i}
+    mv -v "${source}" /tmp/
+    i=$((i+1))
+  done
+
+# ------------------------------------------------------------------------------
+# print_header "$0: normal successful completion"
+
+  # println_red "bailing" && exit 1

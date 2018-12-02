@@ -66,6 +66,11 @@ function print_green() {
   printf "${green}$1${reset}"
 }
 
+function print_header() {
+  print_separator_hr
+  println_cyan "${1}\n"
+}
+
 function print_magenta() {
   printf "${magenta}$1${reset}"
 }
@@ -125,7 +130,7 @@ function run_it() {
 
 function run_it_ignore_failure() {
   println_green "COMMAND: $1"
-  eval $1
+  eval $1 || println_yellow "    **** COMMAND FAILED. run_it_ignore_failure will continue processing. status = $? ... ****"
 }
 
 function verify() {
