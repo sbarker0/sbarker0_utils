@@ -55,25 +55,38 @@ function processFile() {
       || [ "${ext}" == 'doc' ]    \
       || [ "${ext}" == 'docx' ]   \
       || [ "${ext}" == 'gnucash' ]  \
+      || [ "${ext}" == 'jar' ]    \
+      || [ "${ext}" == 'jpg' ]    \
+      || [ "${ext}" == 'less' ]   \
       || [ "${ext}" == 'ofx' ]    \
       || [ "${ext}" == 'pdf' ]    \
+      || [ "${ext}" == 'png' ]    \
       || [ "${ext}" == 'tar' ]    \
+      || [ "${ext}" == 'tiff' ]   \
+      || [ "${ext}" == 'xls' ]    \
+      || [ "${ext}" == 'xlsx' ]   \
       || [ "${ext}" == 'zip' ]    \
+      || [ "${filename}" == 'gradle/' ]        \
+      || [ "${filename}" == 'gradlew' ]        \
+      || [ "${filename}" == 'gradlew.bat' ]    \
            ; then
     println_yellow "${filespec} is recognized as non-text. Skipping."
   else
     if [ 0 != 1 ]                         \
           && [ "${ext}" != "css" ]        \
+          && [ "${ext}" != "csv" ]        \
           && [ "${ext}" != 'gitignore' ]  \
           && [ "${ext}" != 'gradle' ]     \
           && [ "${ext}" != 'groovy' ]     \
           && [ "${ext}" != "html" ]       \
           && [ "${ext}" != "java" ]       \
+          && [ "${ext}" != "js" ]         \
           && [ "${ext}" != "json" ]       \
           && [ "${ext}" != "md" ]         \
           && [ "${ext}" != "properties" ] \
           && [ "${ext}" != "scss" ]       \
           && [ "${ext}" != "sh" ]         \
+          && [ "${ext}" != "sql" ]        \
           && [ "${ext}" != "swagger-codegen-ignore" ] \
           && [ "${ext}" != "ts" ]         \
           && [ "${ext}" != "txt" ]        \
