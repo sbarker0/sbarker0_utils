@@ -139,3 +139,11 @@ function verify() {
   test "$response" != "y" && println_yellow "  bailing..." && exit 1
   return 0  # lame result to force zero and not trigger exit on "error"
 }
+
+function verify_pretty() {
+  local msg="$1" && [ "$msg" == "" ] && msg="Ready to proceed?"
+  print_magenta "$msg"
+  response=`choose " " "y/n"`
+  test "$response" != "y" && println_yellow "  bailing..." && exit 1
+  return 0  # lame result to force zero and not trigger exit on "error"
+}

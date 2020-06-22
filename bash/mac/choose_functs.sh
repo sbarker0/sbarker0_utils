@@ -1,5 +1,8 @@
 #! /bin/bash
 
+# Don't use these functions directly. See `which choose`
+
+
 . $SBARKER0_UTILS_BASH_MAC/common_functs.sh
 
 
