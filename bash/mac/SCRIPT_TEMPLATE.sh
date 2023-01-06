@@ -39,8 +39,8 @@ EOS
 # ------------------------------------------------------------------------------
 # confirm env requirements
 
-x=$SBARKER0_UTILS
-[ "$x" == "" ] && printf "ERROR: env variable SBARKER0_UTILS is required\n" && die_usage
+# x=$SOME_ENV_VAR
+# [ "$x" == "" ] && printf "ERROR: env variable SOME_ENV_VAR is required\n" && die_usage
 
 
 # ------------------------------------------------------------------------------
@@ -88,10 +88,18 @@ print_header "running step 1"
 
 
 # ------------------------------------------------------------------------------
-print_header "running step 2"
+print_header "running step 2 to demonstrate easy inputs"
 
-  println_yellow "work goes here : remember to use color conventions in show_colors.sh"
-  show_colors.sh
+  x=`choose 'Choose a yes or no answer?'`
+  println_green "Answer was $x"
+  if [ !"$x" == 'yes' ]; then
+    exit 1
+  fi
+
+  println
+  println "Leaving off the parens on the fruits would make them just default to first letters"
+  x=`choose "Choose a fruit: " "a(p)ple/b(a)nanna/c(h)erries"`
+  println_green "Fruit choice is $x"
 
 
 # ------------------------------------------------------------------------------

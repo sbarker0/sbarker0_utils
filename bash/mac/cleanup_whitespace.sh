@@ -12,6 +12,7 @@ force=false
 git_dir=
 max_lines=50
 quiet_mode=true
+skip_leading_chars=false
 
 
 # ------------------------------------------------------------------------------
@@ -28,11 +29,12 @@ Usage:
   options:
     -f            force cleanup even if it will affect more than $max_lines
     -g <dir>      process modified and new files shown by 'git status <dir>'
+    -l            skip leading chars [default = $skip_leading_chars]
     -q            flip quiet mode (skips confirmation)  [default = $quiet_mode]
 
   examples:
     cleanup_whitespace.sh /tmp/somefile.txt
-    cleanup_whitespace.sh -g <dir>
+    cleanup_whitespace.sh -g <dir> -l
 EOS
   exit 1
 }
@@ -52,8 +54,10 @@ function processFile() {
   ext="${filename##*.}"
   if  [ 0 == 1 ]                  \
       || [ "${ext}" == 'bz' ]     \
+      || [ "${ext}" == 'class' ]     \
       || [ "${ext}" == 'doc' ]    \
       || [ "${ext}" == 'docx' ]   \
+      || [ "${ext}" == 'gliffy' ]  \
       || [ "${ext}" == 'gnucash' ]  \
       || [ "${ext}" == 'jar' ]    \
       || [ "${ext}" == 'jpg' ]    \
@@ -76,6 +80,7 @@ function processFile() {
           && [ "${ext}" != "css" ]        \
           && [ "${ext}" != "csv" ]        \
           && [ "${ext}" != 'gitignore' ]  \
+          && [ "${ext}" != "go" ]         \
           && [ "${ext}" != 'gradle' ]     \
           && [ "${ext}" != 'groovy' ]     \
           && [ "${ext}" != "html" ]       \
@@ -98,7 +103,11 @@ function processFile() {
       verify
     fi
     stripTrailing ${filespec}
-    replaceLeadingTabs ${filespec}
+    if [ ! $skip_leading_chars ]; then
+      println_red "clearing leading tabs" && exit 1
+
+      replaceLeadingTabs ${filespec}
+    fi
     stripSpacesFromEmptyLines ${filespec}
   fi
 }
@@ -178,7 +187,7 @@ function stripSpacesFromEmptyLines() {
   if [ $do_it -ne 0 ]; then
     println "    skipped"
   else
-    sed -E -i "" -e $'s/^ +\r/\r/' $filespec
+    sed -E -i "" -e $'s/^[ \t]+\r/\r/' $filespec
     println "    replaced chars"
   fi
 }
@@ -233,10 +242,11 @@ x=$SBARKER0_UTILS
 # ------------------------------------------------------------------------------
 # options and args
 
-while getopts ":fg:q" opt; do
+while getopts ":fg:lq" opt; do
   case $opt in
     f)  force=true ;;
     g)  git_dir=$OPTARG ;;
+    l)  skip_leading_chars=true ;;
     q)  quiet_mode=false ;;
     \?) die_usage ;;
   esac
@@ -251,6 +261,7 @@ cat >&1 <<EOS
 
   force               = $force
   quiet_mode          = $quiet_mode
+  skip_leading_chars  = $skip_leading_chars
 
 EOS
 $quiet_mode || verify
