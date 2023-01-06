@@ -1,0 +1,233 @@
+#! /bin/bash
+
+# This is a personal script I use a lot. I developed it over years and it is
+# UGLY. Don't judge!
+#
+# Runtime assumes you cloned https://github.com/sbarker0/sbarker0_utils
+# and added sbarker0_utils/bash/mac to your path
+# First command is
+#   findg -h
+#
+# Ignore (or send me a PR to fix!) the whining about errors
+# grepping directories
+
+
+# ------------------------------------------------------------------------------
+
+. common_functs.sh
+
+
+# ------------------------------------------------------------------------------
+# defaults
+
+ignore_case=true
+quiet_mode=true
+open_each_file_in_editor=false
+command=
+
+
+# ------------------------------------------------------------------------------
+
+function die_usage() {
+  cat >&2 <<EOS
+A way to run find and execute grep without so much typing.
+
+Usage:
+  findg [options] ["<dirs>" [<file_regex>]] <grep_regex>
+
+  options:
+    -I              flip ignore case flag [curr = ${ignore_case}]
+    -c "<command>"  run command on each found file
+    -e              open each found file w/ \$TEXT_EDITOR (currently '$TEXT_EDITOR')
+    -h              show usage
+    -q              switch quiet mode     [curr = ${quiet_mode}]
+
+  examples:
+    findg src "*.java" "FILE_TO_UPLOAD"   # searches all java files in src dir for FILE_TO_UPLOAD
+    findg "FILE_TO_UPLOAD"                # searches files in current dir for FILE_TO_UPLOAD
+    findg src "FILE_TO_UPLOAD"            # searches all files in src dir for FILE_TO_UPLOAD
+    findg . "*.java" "FILE_TO_UPLOAD"     # searches all java files in current dir for FILE_TO_UPLOAD
+    findg -c "ls -al" "whatever"          # searches all subdirs and runs command "ls -al" on them 
+                                          #    an editor other then default is a useful command
+    findg "foo bar" "some.*regex"         # searches all files in dirs foo and bar for the regex
+
+EOS
+  exit 1
+}
+
+
+# ------------------------------------------------------------------------------
+
+# options
+while getopts ":Ic:eq" opt; do
+  case $opt in
+    I)  ignore_case=false ;;
+    c)  command=$OPTARG ;;
+    e)  open_each_file_in_editor=true ;;
+    q)  quiet_mode=false ;;
+    \?) die_usage ;;
+  esac
+done
+shift $((OPTIND-1))
+
+
+dirs="."
+file_regex="."
+grep_regex="."
+
+arg_count=$#
+if [ "$arg_count" == "0" ] || [ "$arg_count" -gt "3" ]; then
+  println_red "ERROR: INVALID ARGUMENTS" && die_usage
+else if [ "$arg_count" == "1" ]; then
+  grep_regex=$1
+else if [ "$arg_count" == "2" ]; then
+  dirs="$1"
+  grep_regex=$2
+else  # arg_count == 3
+  dirs="$1"
+  file_regex=$2
+  grep_regex=$3
+fi fi fi
+
+
+x=`d8 1`_`t8 1`__`t8s`
+findg_dir=/tmp/findg
+mkdir -p $findg_dir
+findg_filtered_output=$findg_dir/findg_filtered_$x.txt
+findg_full_output=$findg_dir/findg_full_$x.txt
+findg_script=${findg_filtered_output}.sh
+findg_filtered_output_last=$findg_dir/findg_filtered_last.txt
+findg_full_output_last=$findg_dir/findg_full_last.txt
+
+
+# ------------------------------------------------------------------------------
+# user confirmation
+
+cat >&2 <<EOS
+
+  dirs                  = $dirs
+  file_regex            = $file_regex
+  grep_regex            = $grep_regex
+
+  findg_full_output     = $findg_full_output
+  findg_filtered_output = $findg_filtered_output
+
+EOS
+$quiet_mode || verify
+
+
+# ------------------------------------------------------------------------------
+
+# show all the files containing the grep_regex
+ignore_case_option=-i
+if ! $ignore_case ; then
+  ignore_case_option=
+fi
+
+echo >> $findg_full_output
+for dir in $dirs; do
+  if [ -d $dir ]; then
+    if [ "$file_regex" == "." ]; then
+      cmd0="find \"$dir\" -iname \"*\" -exec grep -EnH ${ignore_case_option} \"${grep_regex}\" {} \; | tee -a $findg_full_output"
+    else
+      cmd0="find \"$dir\" -iname \"$file_regex\" -exec grep -EnH ${ignore_case_option} \"${grep_regex}\" {} \; | tee -a $findg_full_output"
+    fi
+    run_it "$cmd0"
+  fi
+done
+
+# sort contents
+x=${findg_full_output}_before_sort
+mv ${findg_full_output} $x
+cat $x  \
+    | sort  \
+    > ${findg_full_output}
+
+# show all the files named with the grep_regex
+# TODO this doesn't really help much. maybe improve
+# find "$dir" -iname "${grep_regex}"
+echo
+
+
+cp $findg_full_output  $findg_full_output_last
+printf "\n\n$findg_full_output\n"       >> $findg_full_output_last
+
+
+cmd1="cat ${findg_full_output}  \
+  | grep -vi binary  \
+  | grep -v  \"^\\./bin\" \
+  | grep -vi \"^\\./tmp/\"  \
+  | grep -vi \"\\.svn\"  \
+  | grep -vi \"/\\.git\"  \
+  | grep -vi \"\\.idea\"  \
+  | grep -vi \"doc/reports\"  \
+  | grep -vi \"/log/\"  \
+  | grep -vi \"\\.html$\"  \
+  | grep -vi \"spec/dummy\"  \
+  | grep -vi \"public/system\"  \
+  | grep -vi \"surefire\"  \
+  | grep -vi \"/target/classes/\"  \
+  | grep -v  \"/sencha/\"  \
+  | grep -v  \"/dijit/\"  \
+  | grep -v  \"/bento.ui/\"  \
+  | grep -v  \"/bower_components/ember\" \
+  | grep -v  \"/bower_components/jquery\" \
+  | grep -v  \"/node_modules/broccoli\" \
+  | grep -v  \"/node_modules/ember\" \
+  | grep -v  \".dropbox.cache\" \
+  | tee $findg_filtered_output"
+
+run_it "$cmd1"
+
+
+file_names_only=`cat $findg_filtered_output \
+    | sed "s/:.*//g" \
+    | sed "s/^/  /" \
+    | uniq`
+
+# add some metadata about command to output file
+printf "\n\n"                                           >> $findg_filtered_output
+printf "     -----\n\n"                                 | tee -a $findg_filtered_output
+printf "file names only...\n$file_names_only\n\n"       | tee -a $findg_filtered_output
+printf "     -----\n\n"                                 >> $findg_filtered_output
+printf "findg '$dirs' '$file_regex' '$grep_regex'\n\n"  >> $findg_filtered_output
+printf "pwd -> `pwd`\n\n"                               >> $findg_filtered_output
+
+
+cp $findg_filtered_output $findg_filtered_output_last
+printf "$findg_filtered_output\n\n" >> $findg_filtered_output_last
+printf "$findg_full_output\n"       >> $findg_filtered_output_last
+
+
+println_cyan "filtered output is in $findg_filtered_output and $findg_filtered_output_last"
+
+if [ "$open_each_file_in_editor" == "true" ] || [ "$command" != "" ]; then
+  cat $findg_filtered_output \
+    | sed "s/:.*//" \
+    | sed "s/.*  -----.*//" \
+    | sed "s/^file names only.*//" \
+    | sed "s/^findg '.*//" \
+    | sed "s/^pwd.*//" \
+    | sed "s/^ *//" \
+    | sort \
+    | uniq \
+    > ${findg_script}_prep
+
+  if [ "$open_each_file_in_editor" == "true" ]; then
+    cat ${findg_script}_prep \
+    | sed "s/^/edit_helper_open.sh \"/" \
+    | sed "s/$/\"/" \
+    | sed "s/^edit_helper_open.sh *$//" \
+    > ${findg_script}
+
+    run_it "sh $findg_script"
+  else
+    cat ${findg_script}_prep \
+    | sed "s/^/${command} \"/" \
+    | sed "s/$/\"/" \
+    | sed "s/^${command} *$//" \
+    > ${findg_script}
+
+    run_it "sh $findg_script"
+  fi
+fi
