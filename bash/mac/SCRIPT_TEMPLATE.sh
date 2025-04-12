@@ -2,6 +2,7 @@
 
 set -e   # terminate script on error
 
+# available from https://github.com/sbarker0/sbarker0_utils if someone is interested
 . $SBARKER0_UTILS_BASH_MAC/common_functs.sh
 
 
@@ -100,6 +101,12 @@ print_header "running step 2 to demonstrate easy inputs"
   println "Leaving off the parens on the fruits would make them just default to first letters"
   x=`choose "Choose a fruit: " "a(p)ple/b(a)nanna/c(h)erries"`
   println_green "Fruit choice is $x"
+
+  println
+  println "Get string input"
+  some_default="default_value"
+  x=`get_input "Enter something: [$some_default] " "$some_default"`
+  println_green "Input string is $x"
 
 
 # ------------------------------------------------------------------------------

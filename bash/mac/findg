@@ -136,10 +136,14 @@ for dir in $dirs; do
   fi
 done
 
-# sort contents
+# make line num lengths consistent and sort contents
 x=${findg_full_output}_before_sort
 mv ${findg_full_output} $x
 cat $x  \
+    | sed -E "s/:([0-9]):/:0\1:/" \
+    | sed -E "s/:([0-9]{2}):/:0\1:/" \
+    | sed -E "s/:([0-9]{3}):/:0\1:/" \
+    | sed -E "s/:([0-9]{4}):/:0\1:/" \
     | sort  \
     > ${findg_full_output}
 
